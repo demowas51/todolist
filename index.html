@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskHub - Minecraft Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Import Font Pixel Minecraft */
+        @import url('https://fonts.cdnfonts.com/css/minecraftia');
+
+        :root {
+            --mc-green: #5aa32a;
+            --mc-dirt: #866043;
+            --mc-grass: #498a21;
+            --mc-stone: #7a7a7a;
+            --mc-wood: #ab8b53;
+            --mc-btn: #bebebe;
+            --mc-btn-hover: #7a7a7a;
+        }
+
+        body { 
+            font-family: 'Minecraftia', sans-serif;
+            image-rendering: pixelated;
+            background-color: #313233;
+            /* Background pola Dirt/Tanah Minecraft */
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                url('https://www.transparenttextures.com/patterns/pave.png');
+        }
+
+        /* Styling Tombol Gaya Minecraft */
+        .mc-button {
+            position: relative;
+            background-color: #bebebe;
+            border: 4px solid #000;
+            border-top-color: #f0f0f0;
+            border-left-color: #f0f0f0;
+            border-bottom-color: #5a5a5a;
+            border-right-color: #5a5a5a;
+            color: #3e3e3e;
+            text-shadow: 2px 2px 0px #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .mc-button:hover {
+            background-color: #7a7a7a;
+            border-top-color: #bebebe;
+            border-left-color: #bebebe;
+            border-bottom-color: #3e3e3e;
+            border-right-color: #3e3e3e;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .mc-button:active {
+            border: 4px solid #000;
+            padding-top: 12px;
+            padding-bottom: 8px;
+        }
+
+        /* Panel Gaya Minecraft */
+        .mc-panel {
+            background: #c6c6c6;
+            border: 4px solid #000;
+            border-top-color: #f0f0f0;
+            border-left-color: #f0f0f0;
+            border-bottom-color: #5a5a5a;
+            border-right-color: #5a5a5a;
+            box-shadow: 0 0 0 4px #c6c6c6;
+        }
+
+        .mc-panel-dark {
+            background: rgba(0, 0, 0, 0.75);
+            border: 4px solid #373737;
+            color: #fff;
+        }
+
+        /* Input Gaya Minecraft */
+        .mc-input {
+            background-color: #000;
+            border: 2px solid #a0a0a0;
+            color: #fff;
+            padding: 12px;
+            outline: none;
+        }
+
+        .mc-input:focus {
+            border-color: #fff;
+        }
+
+        /* Progress Bar Minecraft */
+        .mc-slot {
+            background: #8b8b8b;
+            border: 4px solid #373737;
+            box-shadow: inset 4px 4px 0 #000;
+        }
+
+        /* Khusus Header Grass Block */
+        .grass-header {
+            background: #498a21;
+            border-bottom: 8px solid #866043;
+            box-shadow: 0 4px 0 #5aa32a;
+        }
+
+        /* Scrollbar Pixel */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #333; }
+        ::-webkit-scrollbar-thumb { background: #7a7a7a; border: 2px solid #000; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-900">
+
+    <div id="app">
+        <!-- Halaman Login -->
+        <div id="login-screen" class="flex flex-col items-center justify-center min-h-screen p-4">
+            <div class="mb-6 text-center w-full max-w-lg">
+                <!-- SVG Minecraft Logo dengan perbaikan rendering gradient dan drop shadow -->
+                <svg class="w-full h-28 mx-auto mb-2 drop-shadow-[0_8px_0_rgba(0,0,0,1)]" viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Gradasi Emas Klasik Minecraft -->
+                        <linearGradient id="mcGoldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#FFFF80" />
+                            <stop offset="25%" stop-color="#FFD700" />
+                            <stop offset="75%" stop-color="#C58000" />
+                            <stop offset="100%" stop-color="#804C00" />
+                        </linearGradient>
+                        <!-- Gradasi Hijau Terang untuk TaskHub -->
+                        <linearGradient id="mcGreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#A6FF00" />
+                            <stop offset="100%" stop-color="#4E9E00" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- MINECRAFT: Lapisan Bayangan Belakang (Hitam) -->
+                    <text x="50.5%" y="64" font-family="'Minecraftia', sans-serif" font-size="52" font-weight="bold" fill="#000000" text-anchor="middle" letter-spacing="4">MINECRAFT</text>
+                    <!-- MINECRAFT: Lapisan Depan (Emas Terang Tanpa Border Tebal Penghalang) -->
+                    <text x="50%" y="60" font-family="'Minecraftia', sans-serif" font-size="52" font-weight="bold" fill="url(#mcGoldGrad)" text-anchor="middle" letter-spacing="4">MINECRAFT</text>
+                    
+                    <!-- TASKHUB: Lapisan Bayangan Belakang (Hitam) -->
+                    <text x="50.5%" y="103" font-family="'Minecraftia', sans-serif" font-size="24" font-weight="bold" fill="#000000" text-anchor="middle" letter-spacing="3">TASKHUB</text>
+                    <!-- TASKHUB: Lapisan Depan (Hijau Lime Terang - Sekarang Terbaca Sempurna!) -->
+                    <text x="50%" y="100" font-family="'Minecraftia', sans-serif" font-size="24" font-weight="bold" fill="url(#mcGreenGrad)" text-anchor="middle" letter-spacing="3">TASKHUB</text>
+                </svg>
+                <div class="text-yellow-300 text-xs sm:text-sm animate-bounce tracking-widest mt-2" style="text-shadow: 2px 2px 0px #000; font-family: 'Minecraftia', sans-serif;">
+                    * TASK MANAGEMENT! *
+                </div>
+            </div>
+
+            <div class="max-w-md w-full mc-panel p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-2xl font-bold text-black" style="text-shadow: 2px 2px 0px #fff;">Selamat Datang</h1>
+                    <p class="text-gray-700 mt-2 text-xs">Versi 1.20.0 - Java Edition</p>
+                </div>
+                
+                <div id="login-error" class="hidden mb-6 p-4 bg-red-600 text-white text-xs border-2 border-black">
+                    Username atau password salah!
+                </div>
+
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold mb-2">Username</label>
+                        <input type="text" id="username" placeholder="admin" class="w-full mc-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-2">Password</label>
+                        <input type="password" id="password" placeholder="123" class="w-full mc-input" required>
+                    </div>
+                    <button type="submit" class="w-full mc-button">
+                        Masuk ke TaskHub
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Utama -->
+        <div id="main-dashboard" class="hidden flex flex-col md:flex-row min-h-screen">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-72 mc-panel-dark flex-shrink-0 z-20">
+                <div class="p-6 border-b-4 border-[#373737] flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-mc-green border-2 border-black flex items-center justify-center">
+                        <i class="fas fa-cubes text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tighter text-white">TaskHub</span>
+                </div>
+                
+                <nav class="mt-8 px-4 space-y-4">
+                    <button onclick="showView('dashboard')" id="nav-dashboard" class="w-full mc-button active-nav">
+                        <i class="fas fa-compass"></i>
+                        <span class="text-xs">Ringkasan</span>
+                    </button>
+                    <button onclick="showView('all-tasks')" id="nav-all-tasks" class="w-full mc-button">
+                        <i class="fas fa-scroll"></i>
+                        <span class="text-xs">Semua Tugas</span>
+                    </button>
+                    <button onclick="showView('add-task')" id="nav-add-task" class="w-full mc-button">
+                        <i class="fas fa-hammer"></i>
+                        <span class="text-xs">Tambah Baru</span>
+                    </button>
+                    <button onclick="showView('history')" id="nav-history" class="w-full mc-button">
+                        <i class="fas fa-book"></i>
+                        <span class="text-xs">Riwayat</span>
+                    </button>
+                </nav>
+
+                <div class="mt-auto p-6">
+                    <button onclick="logout()" class="w-full mc-button border-red-900 bg-red-500 text-white shadow-none">
+                        <i class="fas fa-door-open"></i>
+                        <span class="text-xs">Keluar Sesi</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 overflow-y-auto">
+                <header class="grass-header px-10 py-6 flex justify-between items-center sticky top-0 z-10 text-white">
+                    <div>
+                        <h2 id="view-title" class="text-2xl font-bold tracking-tight" style="text-shadow: 3px 3px 0px #000;">Ringkasan</h2>
+                        <p class="text-[10px] uppercase mt-1 opacity-80">World: TaskHub_Creative</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-xs font-bold">Admin Steve</p>
+                            <span class="text-[10px] text-yellow-300">Level 99 Penambang</span>
+                        </div>
+                        <div class="w-12 h-12 border-4 border-black bg-white overflow-hidden">
+                            <img src="https://minotar.net/avatar/Steve/64" alt="Steve" onerror="this.src='https://ui-avatars.com/api/?name=Steve&background=ab8b53&color=fff'">
+                        </div>
+                    </div>
+                </header>
+
+                <div class="p-10 max-w-6xl mx-auto space-y-10">
+                    
+                    <!-- Dashboard Stats -->
+                    <div id="view-dashboard" class="content-view space-y-10">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="mc-panel p-6 border-b-8 border-r-8 border-gray-600">
+                                <p class="text-[10px] font-bold text-gray-700 uppercase">Tugas Aktif</p>
+                                <h3 id="stat-active" class="text-5xl font-bold mt-2">0</h3>
+                                <div class="mt-4 flex items-center space-x-2">
+                                    <div class="w-full h-4 mc-slot">
+                                        <div class="h-full bg-red-500 w-1/2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mc-panel p-6 border-b-8 border-r-8 border-gray-600">
+                                <p class="text-[10px] font-bold text-gray-700 uppercase">Selesai</p>
+                                <h3 id="stat-done" class="text-5xl font-bold mt-2">0</h3>
+                                <div class="mt-4 flex items-center space-x-2">
+                                    <div class="w-full h-4 mc-slot">
+                                        <div class="h-full bg-green-500 w-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-[#373737] p-6 border-4 border-black text-white">
+                                <p class="text-[10px] font-bold uppercase text-gray-400">Survival Days</p>
+                                <h3 class="text-5xl font-bold mt-2">365</h3>
+                                <div class="mt-4 flex space-x-1">
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    <i class="fas fa-heart text-red-500 text-opacity-20"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mc-panel overflow-hidden">
+                            <div class="p-6 bg-gray-300 border-b-4 border-black flex justify-between items-center">
+                                <h3 class="font-bold">Inventory Tugas Terbaru</h3>
+                                <i class="fas fa-box text-xl"></i>
+                            </div>
+                            <div id="recent-tasks-list" class="p-6 space-y-4">
+                                <!-- Konten dinamis -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All Tasks -->
+                    <div id="view-all-tasks" class="content-view hidden">
+                        <div class="mc-panel overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-400 border-b-4 border-black text-xs">
+                                    <tr>
+                                        <th class="px-6 py-4">Item (Tugas)</th>
+                                        <th class="px-6 py-4">Tier (Prioritas)</th>
+                                        <th class="px-6 py-4">Sisa Waktu</th>
+                                        <th class="px-6 py-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tasks-table-body" class="text-xs"></tbody>
+                            </table>
+                            <div id="empty-tasks-msg" class="hidden py-24 text-center">
+                                <i class="fas fa-ghost text-5xl text-gray-400 mb-4"></i>
+                                <p class="font-bold">Tidak ada mob tugas di sini.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Task -->
+                    <div id="view-add-task" class="content-view hidden">
+                        <div class="mc-panel p-8 max-w-2xl mx-auto">
+                            <h3 class="text-xl font-bold mb-8 text-center" style="text-shadow: 2px 2px 0 #fff;">Crafting Table Tugas</h3>
+                            <form id="task-form" class="space-y-6">
+                                <div>
+                                    <label class="block text-xs font-bold mb-2 uppercase">Judul Tugas</label>
+                                    <input type="text" id="task-name" placeholder="Tuliskan quest Anda..." class="w-full mc-input text-sm" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold mb-2 uppercase">Catatan Tambahan</label>
+                                    <textarea id="task-desc" rows="4" class="w-full mc-input text-sm" placeholder="Detail petualangan..."></textarea>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-xs font-bold mb-2 uppercase">Tingkat Prioritas</label>
+                                        <select id="task-priority" class="w-full mc-input text-xs">
+                                            <option value="Low">Wood (Rendah)</option>
+                                            <option value="Medium">Iron (Menengah)</option>
+                                            <option value="High">Diamond (Tinggi)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold mb-2 uppercase">Tenggat Waktu</label>
+                                        <input type="date" id="task-date" class="w-full mc-input text-xs">
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full mc-button mt-8">
+                                    <i class="fas fa-hammer"></i>
+                                    <span>Daftarkan ke TaskHub</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div id="view-history" class="content-view hidden">
+                        <div class="mc-panel overflow-hidden">
+                            <div class="p-6 bg-gray-400 border-b-4 border-black font-bold">Log Penyelesaian</div>
+                            <div id="history-list"></div>
+                        </div>
+                        <button onclick="clearHistory()" class="mt-6 mc-button bg-red-400 text-white">Kosongkan Arsip</button>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Minecraft Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+        <div class="mc-panel-dark px-10 py-4 border-4 border-white flex items-center space-x-4">
+            <i id="toast-icon" class="fas fa-info-circle"></i>
+            <span id="toast-message" class="text-xs uppercase"></span>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let tasks = JSON.parse(localStorage.getItem('mc_tasks')) || [];
+        let history = JSON.parse(localStorage.getItem('mc_history')) || [];
+
+        // Auth
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if(u === 'admin' && p === '123') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-dashboard').classList.remove('hidden');
+                showView('dashboard');
+                showToast('Achievement Unlocked!', 'star');
+                updateStats();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        // Logout
+        function logout() {
+            document.getElementById('main-dashboard').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        // Navigation
+        function showView(v) {
+            document.querySelectorAll('.content-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById(`view-${v}`).classList.remove('hidden');
+            
+            document.getElementById('view-title').innerText = v === 'dashboard' ? 'Ringkasan' : v.replace('-', ' ');
+            
+            if(v === 'all-tasks') renderTasks();
+            if(v === 'dashboard') renderRecent();
+            if(v === 'history') renderHistory();
+        }
+
+        // CRUD
+        document.getElementById('task-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const task = {
+                id: Date.now(),
+                name: document.getElementById('task-name').value,
+                desc: document.getElementById('task-desc').value,
+                priority: document.getElementById('task-priority').value,
+                date: document.getElementById('task-date').value || '...',
+                createdAt: new Date().toLocaleTimeString()
+            };
+            tasks.unshift(task);
+            save();
+            document.getElementById('task-form').reset();
+            showView('all-tasks');
+            showToast('Quest Ditambahkan!', 'plus');
+            updateStats();
+        });
+
+        function complete(id) {
+            const idx = tasks.findIndex(t => t.id === id);
+            const task = tasks.splice(idx, 1)[0];
+            task.completedAt = new Date().toLocaleString();
+            history.unshift(task);
+            save();
+            renderTasks();
+            updateStats();
+            showToast('Quest Selesai!', 'check');
+        }
+
+        function remove(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            save();
+            renderTasks();
+            updateStats();
+            showToast('Item Dibuang!', 'trash');
+        }
+
+        // Fallback untuk avatar eksternal
+        const avatarImg = document.querySelector('img[alt="Steve"]');
+        if (avatarImg) {
+            avatarImg.onerror = function() {
+                this.src = "https://ui-avatars.com/api/?name=Steve&background=ab8b53&color=fff";
+            };
+        }
+
+        function save() {
+            localStorage.setItem('mc_tasks', JSON.stringify(tasks));
+            localStorage.setItem('mc_history', JSON.stringify(history));
+        }
+
+        function renderTasks() {
+            const b = document.getElementById('tasks-table-body');
+            const m = document.getElementById('empty-tasks-msg');
+            b.innerHTML = '';
+            if(tasks.length === 0) { m.classList.remove('hidden'); return; }
+            m.classList.add('hidden');
+            
+            tasks.forEach(t => {
+                const badgeColor = t.priority === 'High' ? 'text-cyan-400' : (t.priority === 'Medium' ? 'text-gray-200' : 'text-amber-600');
+                b.innerHTML += `
+                    <tr class="border-b-2 border-black hover:bg-gray-200 transition">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-black">${t.name}</div>
+                            <div class="text-[8px] text-gray-600">${t.desc || '-'}</div>
+                        </td>
+                        <td class="px-6 py-4 font-bold ${badgeColor}">${t.priority}</td>
+                        <td class="px-6 py-4">${t.date}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end space-x-2">
+                                <button onclick="complete(${t.id})" class="mc-button p-2 bg-green-500 text-white border-green-800"><i class="fas fa-check"></i></button>
+                                <button onclick="remove(${t.id})" class="mc-button p-2 bg-red-500 text-white border-red-800"><i class="fas fa-times"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderRecent() {
+            const c = document.getElementById('recent-tasks-list');
+            if(tasks.length === 0) { c.innerHTML = '<p class="text-center italic opacity-50 text-xs">Inventory kosong.</p>'; return; }
+            c.innerHTML = '';
+            tasks.slice(0, 3).forEach(t => {
+                c.innerHTML += `
+                    <div class="flex items-center space-x-4 p-4 mc-slot">
+                        <div class="w-8 h-8 bg-mc-wood border-2 border-black"></div>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold text-black">${t.name}</div>
+                            <div class="text-[8px] text-gray-300">Slot: ${t.priority}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderHistory() {
+            const c = document.getElementById('history-list');
+            if(history.length === 0) { c.innerHTML = '<p class="p-8 text-center opacity-50 text-xs">Belum ada petualangan selesai.</p>'; return; }
+            c.innerHTML = '';
+            history.forEach(h => {
+                c.innerHTML += `
+                    <div class="p-4 border-b-2 border-black flex justify-between items-center bg-gray-100">
+                        <div>
+                            <p class="font-bold text-gray-500 line-through text-xs">${h.name}</p>
+                            <p class="text-[8px] opacity-50">${h.completedAt}</p>
+                        </div>
+                        <i class="fas fa-check-circle text-green-600"></i>
+                    </div>
+                `;
+            });
+        }
+
+        function clearHistory() { history = []; save(); renderHistory(); updateStats(); }
+
+        function updateStats() {
+            document.getElementById('stat-active').innerText = tasks.length;
+            document.getElementById('stat-done').innerText = history.length;
+        }
+
+        function showToast(m, i) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = m;
+            document.getElementById('toast-icon').className = `fas fa-${i}`;
+            t.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3000);
+        }
+    </script>
+</body>
+</html>
